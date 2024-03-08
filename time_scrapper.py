@@ -12,12 +12,15 @@ def get_time_stories():
         soup = BeautifulSoup(response.content, 'html.parser')
 
         stories = []
-        # print(soup)
-        title=soup.find_all(attrs={'class':'most-popular-feed__item-headline'})
-        links=soup.find_all('a').href
-        print(title)
-        print(links)
         
+        anchors = soup.find_all('a', attrs={'data-article-id': True})
+        
+        for anchor in anchors:
+            link = anchor['href']
+            title = anchor.find('h3', class_='most-popular-feed__item-headline').get_text(strip=True)
+            stories.append({'title': title, 'link': link})
+
+        print(stories)
         return jsonify(stories)
     except Exception as e:
         return jsonify({'error': str(e)})
